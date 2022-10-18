@@ -80,7 +80,7 @@ impl Vec3 {
         self.length_squared().sqrt()
     }
 
-    fn length_squared(&self) -> f64 {
+    pub fn length_squared(&self) -> f64 {
         self.x.powf(2.0) + self.y.powf(2.0) + self.z.powf(2.0)
     }
 
