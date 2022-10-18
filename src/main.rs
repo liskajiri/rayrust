@@ -4,7 +4,7 @@ pub mod vec3;
 use ray::*;
 use vec3::*;
 
-fn hit_sphere(center: Point3, radius: f64, ray: Ray) -> bool {
+fn hit_sphere(center: Point3, radius: f64, ray: &Ray) -> f64 {
     // Calculating if a sphere can ever be hit by a ray
 
     let shifted_center = ray.origin() - center;
@@ -13,18 +13,28 @@ fn hit_sphere(center: Point3, radius: f64, ray: Ray) -> bool {
     let c = dot(shifted_center, shifted_center) - radius * radius;
 
     let discriminant = b * b - 4.0 * a * c;
-    discriminant > 0.0
+
+    if discriminant < 0.0 {
+        -1.0
+    } else {
+        (-b - discriminant.sqrt()) / (2.0 * a)
+    }
 }
 
 fn ray_color(r: Ray) -> Color {
-    let dir = r.direction();
-
     let sphere_center = Point3::z(-1.0);
-    if hit_sphere(sphere_center, 0.5, r) {
-        return Color::x(1.0);
+    let t = hit_sphere(sphere_center, 0.5, &r);
+    if t > 0.0 {
+        let n = (r.at(t) - Vec3::z(-1.0)).unit_vector();
+        return 0.5
+            * Color {
+                x: n.x + 1.0,
+                y: n.y + 1.0,
+                z: n.z + 1.0,
+            };
     }
 
-    let unit_direction = dir.unit_vector();
+    let unit_direction = r.direction().unit_vector();
     let t = 0.5 * (unit_direction.y + 1.0);
 
     // 1 -> blue; 0 -> white
