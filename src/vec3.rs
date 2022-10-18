@@ -1,4 +1,6 @@
 use std::fmt::{Display, Formatter};
+use std::fs;
+use std::fs::File;
 use std::ops::{Add, Div, Mul, Sub};
 
 #[derive(Copy, Clone)]
@@ -96,8 +98,13 @@ impl Vec3 {
         }
     }
 
-    pub(crate) fn unit_vector(&mut self) -> &mut Vec3 {
-        self.div(self.length())
+    pub(crate) fn unit_vector(self) -> Vec3 {
+        let len = self.length();
+        Vec3 {
+            x: self.x / len,
+            y: self.y / len,
+            z: self.z / len,
+        }
     }
 }
 
@@ -179,6 +186,10 @@ impl Div<f64> for Vec3 {
     }
 }
 
+pub fn dot(u: Vec3, v: Vec3) -> f64 {
+    u.x * v.x + u.y * v.y + u.z * v.z
+}
+
 pub fn write_color(pixel_color: Color) {
     let const_260 = 255.999;
     println!(
@@ -187,4 +198,17 @@ pub fn write_color(pixel_color: Color) {
         ((const_260 * pixel_color.y) as i32),
         ((const_260 * pixel_color.z) as i32)
     )
+}
+
+pub fn write_color_to_file(filepath: String, pixel_color: Color) {
+    let const_260 = 255.999;
+
+    let formatted_color = format!(
+        "{} {} {}",
+        ((const_260 * pixel_color.x) as i32),
+        ((const_260 * pixel_color.y) as i32),
+        ((const_260 * pixel_color.z) as i32)
+    );
+
+    fs::write(filepath, formatted_color).expect("File error");
 }
