@@ -1,25 +1,42 @@
-use std::fmt::{write, Display, Formatter};
-use std::ops::{Add, Mul, Sub};
+use std::fmt::{Display, Formatter};
+use std::ops::{Add, Div, Mul, Sub};
 
+#[derive(Copy, Clone)]
 pub struct Vec3 {
-    x: f64,
-    y: f64,
-    z: f64,
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
 }
 
-type Point3 = Vec3;
-type Color = Vec3;
+pub type Point3 = Vec3;
+pub type Color = Vec3;
 
 impl Vec3 {
     pub fn new(x: f64, y: f64, z: f64) -> Self {
         Vec3 { x, y, z }
     }
 
-    const ONE: Vec3 = Vec3 {
+    pub const ZERO: Vec3 = Vec3 {
         x: 0.0,
         y: 0.0,
         z: 0.0,
     };
+
+    pub const ONE: Vec3 = Vec3 {
+        x: 1.0,
+        y: 1.0,
+        z: 1.0,
+    };
+
+    pub fn x(x: f64) -> Vec3 {
+        Vec3 { x, y: 0.0, z: 0.0 }
+    }
+    pub fn y(y: f64) -> Vec3 {
+        Vec3 { x: 0.0, y, z: 0.0 }
+    }
+    pub fn z(z: f64) -> Vec3 {
+        Vec3 { x: 0.0, y: 0.0, z }
+    }
 
     // Arithmetic functions
 
@@ -79,7 +96,7 @@ impl Vec3 {
         }
     }
 
-    fn unit_vector(&mut self) -> &mut Vec3 {
+    pub(crate) fn unit_vector(&mut self) -> &mut Vec3 {
         self.div(self.length())
     }
 }
@@ -141,6 +158,24 @@ impl Mul<f64> for Vec3 {
             y: self.y * rhs,
             z: self.z * rhs,
         }
+    }
+}
+
+impl Mul<Vec3> for f64 {
+    type Output = Vec3;
+
+    #[inline]
+    fn mul(self, rhs: Vec3) -> Self::Output {
+        rhs * self
+    }
+}
+
+impl Div<f64> for Vec3 {
+    type Output = Self;
+
+    #[inline]
+    fn div(self, rhs: f64) -> Self::Output {
+        self * (1.0 / rhs)
     }
 }
 
