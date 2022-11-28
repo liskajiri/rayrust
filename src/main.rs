@@ -1,10 +1,11 @@
-pub mod ray;
-pub mod vec3;
-pub mod hittable;
-pub mod sphere;
-
 use ray::*;
 use vec3::*;
+
+pub mod hittable;
+mod hittable_list;
+pub mod ray;
+pub mod sphere;
+pub mod vec3;
 
 fn hit_sphere(center: Point3, radius: f64, ray: &Ray) -> f64 {
     // Calculating if a sphere can ever be hit by a ray

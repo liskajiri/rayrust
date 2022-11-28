@@ -1,7 +1,6 @@
 use std::fmt::{Display, Formatter};
 use std::fs;
-use std::fs::File;
-use std::ops::{Add, Div, Mul, Sub};
+use std::ops::{Add, Div, Mul, Neg, Sub};
 
 #[derive(Copy, Clone)]
 pub struct Vec3 {
@@ -183,6 +182,19 @@ impl Div<f64> for Vec3 {
     #[inline]
     fn div(self, rhs: f64) -> Self::Output {
         self * (1.0 / rhs)
+    }
+}
+
+impl Neg for Vec3 {
+    type Output = Vec3;
+
+    #[inline]
+    fn neg(self) -> Self::Output {
+        Self {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
+        }
     }
 }
 
