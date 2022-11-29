@@ -1,5 +1,4 @@
 use std::fmt::{Display, Formatter};
-use std::fs;
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
 #[derive(Copy, Clone)]
@@ -200,27 +199,4 @@ impl Neg for Vec3 {
 
 pub fn dot(u: Vec3, v: Vec3) -> f64 {
     u.x * v.x + u.y * v.y + u.z * v.z
-}
-
-pub fn write_color(pixel_color: Color) {
-    let const_260 = 255.999;
-    println!(
-        "{} {} {}",
-        ((const_260 * pixel_color.x) as i32),
-        ((const_260 * pixel_color.y) as i32),
-        ((const_260 * pixel_color.z) as i32)
-    )
-}
-
-pub fn write_color_to_file(filepath: String, pixel_color: Color) {
-    let const_260 = 255.999;
-
-    let formatted_color = format!(
-        "{} {} {}",
-        ((const_260 * pixel_color.x) as i32),
-        ((const_260 * pixel_color.y) as i32),
-        ((const_260 * pixel_color.z) as i32)
-    );
-
-    fs::write(filepath, formatted_color).expect("File error");
 }

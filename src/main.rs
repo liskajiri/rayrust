@@ -1,53 +1,26 @@
 use ray::*;
 use vec3::*;
 
+use crate::hittable::Hittable;
+use crate::hittable_list::HittableList;
+use crate::sphere::Sphere;
+use crate::utilities::write_buffer_to_file;
+
 pub mod hittable;
-mod hittable_list;
+pub mod hittable_list;
 pub mod ray;
 pub mod sphere;
+pub mod utilities;
 pub mod vec3;
 
-fn hit_sphere(center: Point3, radius: f64, ray: &Ray) -> f64 {
-    // Calculating if a sphere can ever be hit by a ray
-
-    let shifted_center = ray.origin() - center;
-    let a = ray.direction().length_squared();
-    let half_b = dot(shifted_center, ray.direction());
-    let c = dot(shifted_center, shifted_center) - radius * radius;
-    let discriminant = half_b * half_b - a * c;
-
-    if discriminant < 0.0 {
-        -1.0
-    } else {
-        (-half_b - discriminant.sqrt()) / a
-    }
-}
-
-fn ray_color(r: Ray) -> Color {
-    let sphere_center = Point3::z(-1.0);
-    let t = hit_sphere(sphere_center, 0.5, &r);
-    if t > 0.0 {
-        let n = (r.at(t) - Vec3::z(-1.0)).unit_vector();
-        return 0.5
-            * Color {
-                x: n.x + 1.0,
-                y: n.y + 1.0,
-                z: n.z + 1.0,
-            };
+fn ray_color(r: &Ray, world: &dyn Hittable) -> Color {
+    if let Some(rec) = world.hit(r, 0.0, f64::INFINITY) {
+        return 0.5 * (rec.normal + Color::ONE);
     }
 
     let unit_direction = r.direction().unit_vector();
     let t = 0.5 * (unit_direction.y + 1.0);
-
-    // 1 -> blue; 0 -> white
-    // blend = (1-t) * start_val + t * end_val
-    // Here we have start_val = Color::ONE, end_val = Color(0.5, 0.7, 1)
-    (1.0 - t) * Color::ONE
-        + t * Color {
-            x: 0.5,
-            y: 0.7,
-            z: 1.0,
-        }
+    (1.0 - t) * Color::ONE + t * Color::new(0.5, 0.7, 1.0)
 }
 
 fn main() {
@@ -56,8 +29,12 @@ fn main() {
     let image_width = 400;
     let image_height = (image_width as f64 / aspect_ratio) as i32;
 
-    // Camera
+    // World
+    let mut world = HittableList::EMPTY;
+    world.add(Box::new(Sphere::new(Point3::z(-1.0), 0.5)));
+    world.add(Box::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0)));
 
+    // Camera
     let viewport_height = 2.0;
     let viewport_width = aspect_ratio * viewport_height;
     let focal_length = 1.0;
@@ -69,7 +46,7 @@ fn main() {
     let lower_left_corner = origin - (horizontal / 2.0) - (vertical / 2.0) - depth;
 
     // Render
-    print!("P3\n{image_width} {image_height}\n255\n");
+    let mut buffer: Vec<Color> = Vec::new();
 
     let image_width_less = (image_width as f64) - 1.0;
     let image_height_less = (image_height as f64) - 1.0;
@@ -84,9 +61,11 @@ fn main() {
                 orig: origin,
                 dir: ray_direction,
             };
-            let pixel_color = ray_color(r);
+            let pixel_color = ray_color(&r, &world);
 
-            write_color(pixel_color);
+            buffer.push(pixel_color);
         }
     }
+
+    write_buffer_to_file(&"./images/Image_5.ppm".to_string(), &buffer);
 }

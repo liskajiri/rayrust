@@ -16,7 +16,7 @@ impl Ray {
     }
 
     pub fn direction(&self) -> Vec3 {
-        self.dir.clone()
+        self.dir
         // self.dir
     }
 
