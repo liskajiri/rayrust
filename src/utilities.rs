@@ -1,9 +1,15 @@
+use rand::Rng;
+
 use std::fs::OpenOptions;
 use std::io::Write;
 
 use crate::vec3::Color;
 
-pub fn write_buffer_to_file(filepath: &String, buffer: &Vec<Color>) {
+pub fn write_buffer_to_file(filepath: &String, buffer: &Vec<Color>, samples_per_pixel: u32) {
+    fn clamp_color(color: f64) -> i32 {
+        (256.0 * clamp(color, 0.0, 0.999)) as i32
+    }
+
     let mut file = OpenOptions::new()
         .write(true)
         .create(true)
@@ -19,16 +25,33 @@ pub fn write_buffer_to_file(filepath: &String, buffer: &Vec<Color>) {
     let first_line = format!("P3\n{image_width} {image_height}\n255\n");
     file.write_all(first_line.as_bytes()).expect("No file");
 
-    let const_260 = 255.999;
-    for pixel_color in buffer {
-        let formatted_color = format!(
-            "{} {} {}",
-            ((const_260 * pixel_color.x) as i32),
-            ((const_260 * pixel_color.y) as i32),
-            ((const_260 * pixel_color.z) as i32)
-        );
+    let scale = 1.0 / (samples_per_pixel as f64);
 
-        file.write_all(formatted_color.as_bytes()).unwrap();
-        file.write_all("\n".as_bytes()).unwrap();
+    let mut output = String::new();
+
+    for pixel_color in buffer {
+        let scaled_color = *pixel_color * scale;
+        let formatted_color = format!(
+            "{} {} {}\n",
+            clamp_color(scaled_color.x),
+            clamp_color(scaled_color.y),
+            clamp_color(scaled_color.z),
+        );
+        output.push_str(&*formatted_color);
     }
+    file.write_all(output.as_bytes()).unwrap();
+}
+
+pub fn random_double() -> f64 {
+    rand::thread_rng().gen_range(0.0..1.0)
+}
+
+pub fn clamp(x: f64, min: f64, max: f64) -> f64 {
+    if x < min {
+        return min;
+    }
+    if x > max {
+        return max;
+    }
+    x
 }

@@ -17,7 +17,6 @@ impl Ray {
 
     pub fn direction(&self) -> Vec3 {
         self.dir
-        // self.dir
     }
 
     pub fn at(&self, t: f64) -> Vec3 {
