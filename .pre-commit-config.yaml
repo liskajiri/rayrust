@@ -1,0 +1,53 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.3.0
+    hooks:
+      - id: check-byte-order-marker
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+      - id: trailing-whitespace
+
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.8.1
+    hooks:
+      - id: typos
+
+  - repo: local
+    hooks:
+      - id: cargo-fmt
+        name: cargo fmt
+        entry: cargo fmt
+        args: ['--', '--check']
+        language: system
+        types: [rust]
+
+      - id: cargo-clippy
+        name: cargo clippy
+        entry: cargo clippy
+        args: ['--all-targets',
+               '--all-features',
+               '--tests',
+               '--benches',
+               '--']
+            #, '-D', 'warnings']
+        language: system
+        types: [rust]
+        pass_filenames: false
+
+      - id: cargo-test
+        name: cargo test
+        entry: cargo test run --all-features
+        language: system
+        types: [rust]
+        pass_filenames: false
+
+      - id: cargo-audit
+        name: cargo audit
+        entry: cargo audit
+        language: system
+        types: [rust]
+        pass_filenames: false
