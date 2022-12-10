@@ -110,6 +110,17 @@ impl Vec3 {
             -in_unit_sphere
         }
     }
+
+    pub fn near_zero(self) -> bool {
+        // return true if vector is close to zero
+        let threshold = 1e-8;
+        self.x.abs() < threshold && self.y.abs() < threshold && self.z.abs() < threshold
+    }
+
+    // Reflections for smooth metals
+    pub fn reflect(v: &Vec3, normal: &Vec3) -> Vec3 {
+        *v - 2.0 * dot(*v, *normal) * *normal
+    }
 }
 
 // Utility functions

@@ -4,12 +4,14 @@ use vec3::*;
 use crate::camera::Camera;
 use crate::hittable::Hittable;
 use crate::hittable_list::HittableList;
+use crate::material::{Lambertian, Material, Metal};
 use crate::sphere::Sphere;
 use crate::utilities::{random_double, write_buffer_to_file};
 
 mod camera;
 mod hittable;
 mod hittable_list;
+mod material;
 mod ray;
 mod sphere;
 mod utilities;
@@ -21,14 +23,12 @@ fn ray_color(r: &Ray, world: &dyn Hittable, depth: i32) -> Color {
     }
 
     if let Some(rec) = world.hit(r, 0.001, f64::INFINITY) {
-        // let target: Point3 = rec.p + rec.normal + Vec3::random_unit_vector();
-        let target: Point3 = rec.p + Vec3::random_in_hemisphere(&rec.normal);
-        let ray = Ray {
-            orig: rec.p,
-            dir: target - rec.p,
+        // scattered and attenuation are changed in material.scatter()
+        return if let Some((scattered, attenuation)) = rec.material.scatter(r, &rec) {
+            attenuation * ray_color(&scattered, world, depth - 1)
+        } else {
+            Color::ZERO
         };
-        // reflects 1/2 of the color
-        return 0.5 * ray_color(&ray, world, depth - 1);
     }
 
     let unit_direction = r.direction().unit_vector();
@@ -46,8 +46,61 @@ fn main() {
 
     // World
     let mut world = HittableList::EMPTY;
-    world.add(Box::new(Sphere::new(Point3::z(-1.0), 0.5)));
-    world.add(Box::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0)));
+
+    let material_ground = Box::new(Lambertian {
+        albedo: Color::new(0.8, 0.8, 0.0),
+    });
+    let material_center = Box::new(Lambertian {
+        albedo: Color::new(0.7, 0.3, 0.3),
+    });
+    let material_left = Box::new(Metal {
+        albedo: Color::new(0.8, 0.8, 0.8),
+        fuzziness: 0.3,
+    });
+    let material_right = Box::new(Metal {
+        albedo: Color::new(0.8, 0.6, 0.2),
+        fuzziness: 1.0,
+    });
+
+    world.add(Box::new(Sphere {
+        center: Point3 {
+            x: 0.0,
+            y: -100.5,
+            z: -1.0,
+        },
+        radius: 100.0,
+        material: material_ground,
+    }));
+
+    world.add(Box::new(Sphere {
+        center: Point3 {
+            x: 0.0,
+            y: 0.0,
+            z: -1.0,
+        },
+        radius: 0.5,
+        material: material_center,
+    }));
+
+    world.add(Box::new(Sphere {
+        center: Point3 {
+            x: -1.0,
+            y: 0.0,
+            z: -1.0,
+        },
+        radius: 0.5,
+        material: material_left,
+    }));
+
+    world.add(Box::new(Sphere {
+        center: Point3 {
+            x: 1.0,
+            y: 0.0,
+            z: -1.0,
+        },
+        radius: 0.5,
+        material: material_right,
+    }));
 
     // Camera
     let camera = Camera::new();
@@ -74,7 +127,7 @@ fn main() {
     }
 
     write_buffer_to_file(
-        &"./images/image_10.ppm".to_string(),
+        &"./images/image_12.ppm".to_string(),
         &buffer,
         samples_per_pixel,
     );

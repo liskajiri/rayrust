@@ -1,14 +1,16 @@
-use crate::{dot, Point3, Ray, Vec3};
+use crate::material::EmptyMaterial;
+use crate::{dot, Material, Point3, Ray, Vec3};
 
 #[derive(Clone, Copy)]
-pub struct HitRecord {
+pub struct HitRecord<'a> {
     pub p: Point3,
     pub normal: Vec3,
+    pub material: &'a dyn Material,
     pub t: f64,
     pub front_face: bool,
 }
 
-impl HitRecord {
+impl<'a> HitRecord<'a> {
     pub fn set_face_normal(&mut self, r: &Ray, outward_normal: &Vec3) {
         self.front_face = dot(r.direction(), *outward_normal) < 0.0;
 
@@ -19,9 +21,10 @@ impl HitRecord {
         }
     }
 
-    pub const EMPTY: HitRecord = HitRecord {
+    pub const EMPTY: HitRecord<'a> = HitRecord {
         p: Vec3::ZERO,
         normal: Vec3::ZERO,
+        material: &EmptyMaterial {},
         t: 0.0,
         front_face: false,
     };
@@ -30,6 +33,7 @@ impl HitRecord {
         HitRecord {
             p,
             normal,
+            material: &EmptyMaterial {},
             t,
             front_face,
         }
