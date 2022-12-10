@@ -79,6 +79,11 @@ impl Vec3 {
         }
     }
 
+    // True Lambertian diffuse
+    pub fn random_unit_vector() -> Vec3 {
+        Vec3::unit_vector(Vec3::random_in_unit_sphere())
+    }
+
     pub fn random_from_range(min: f64, max: f64) -> Vec3 {
         Vec3 {
             x: random_double_from_range(min, max),
@@ -93,6 +98,16 @@ impl Vec3 {
             if p.length_squared() < 1.0 {
                 return p;
             }
+        }
+    }
+
+    // Diffuse method - Uniform scatter direction with no dependence on the normal
+    pub fn random_in_hemisphere(normal: &Vec3) -> Vec3 {
+        let in_unit_sphere = Vec3::random_in_unit_sphere();
+        if dot(in_unit_sphere, *normal) > 0.0 {
+            in_unit_sphere
+        } else {
+            -in_unit_sphere
         }
     }
 }

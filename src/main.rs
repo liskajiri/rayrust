@@ -20,8 +20,9 @@ fn ray_color(r: &Ray, world: &dyn Hittable, depth: i32) -> Color {
         return Color::ZERO;
     }
 
-    if let Some(rec) = world.hit(r, 0.0, f64::INFINITY) {
-        let target: Point3 = rec.p + rec.normal + Vec3::random_in_unit_sphere();
+    if let Some(rec) = world.hit(r, 0.001, f64::INFINITY) {
+        // let target: Point3 = rec.p + rec.normal + Vec3::random_unit_vector();
+        let target: Point3 = rec.p + Vec3::random_in_hemisphere(&rec.normal);
         let ray = Ray {
             orig: rec.p,
             dir: target - rec.p,
@@ -73,7 +74,7 @@ fn main() {
     }
 
     write_buffer_to_file(
-        &"./images/image_7.ppm".to_string(),
+        &"./images/image_10.ppm".to_string(),
         &buffer,
         samples_per_pixel,
     );

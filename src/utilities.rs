@@ -13,7 +13,6 @@ pub fn write_buffer_to_file(filepath: &String, buffer: &Vec<Color>, samples_per_
     let mut file = OpenOptions::new()
         .write(true)
         .create(true)
-        .append(true)
         .open(filepath)
         .unwrap();
 
@@ -22,21 +21,17 @@ pub fn write_buffer_to_file(filepath: &String, buffer: &Vec<Color>, samples_per_
     let image_width = 400;
     let image_height = (image_width as f64 / aspect_ratio) as i32;
 
-    let first_line = format!("P3\n{image_width} {image_height}\n255\n");
-    file.write_all(first_line.as_bytes()).expect("No file");
+    let mut output = format!("P3\n{image_width} {image_height}\n255\n");
 
     let scale = 1.0 / (samples_per_pixel as f64);
 
-    let mut output = String::new();
-
     for pixel_color in buffer {
         let scaled_color = *pixel_color * scale;
-        let formatted_color = format!(
-            "{} {} {}\n",
-            clamp_color(scaled_color.x),
-            clamp_color(scaled_color.y),
-            clamp_color(scaled_color.z),
-        );
+        let r = scaled_color.x.sqrt();
+        let g = scaled_color.y.sqrt();
+        let b = scaled_color.z.sqrt();
+        let formatted_color =
+            format!("{} {} {}\n", clamp_color(r), clamp_color(g), clamp_color(b),);
         output.push_str(&*formatted_color);
     }
     file.write_all(output.as_bytes()).unwrap();
