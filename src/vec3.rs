@@ -1,3 +1,5 @@
+use crate::random_double;
+use crate::utilities::random_double_from_range;
 use std::fmt::{Display, Formatter};
 use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Sub, SubAssign};
 
@@ -66,6 +68,31 @@ impl Vec3 {
             x: self.x / len,
             y: self.y / len,
             z: self.z / len,
+        }
+    }
+
+    pub fn random() -> Vec3 {
+        Vec3 {
+            x: random_double(),
+            y: random_double(),
+            z: random_double(),
+        }
+    }
+
+    pub fn random_from_range(min: f64, max: f64) -> Vec3 {
+        Vec3 {
+            x: random_double_from_range(min, max),
+            y: random_double_from_range(min, max),
+            z: random_double_from_range(min, max),
+        }
+    }
+
+    pub fn random_in_unit_sphere() -> Vec3 {
+        loop {
+            let p = Vec3::random_from_range(-1.0, 1.0);
+            if p.length_squared() < 1.0 {
+                return p;
+            }
         }
     }
 }
