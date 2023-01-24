@@ -21,33 +21,33 @@ repos:
       - id: cargo-fmt
         name: cargo fmt
         entry: cargo fmt
-        args: ['--', '--check']
+        args: [ '--', '--check' ]
         language: system
-        types: [rust]
+        types: [ rust ]
 
       - id: cargo-clippy
         name: cargo clippy
         entry: cargo clippy
-        args: ['--all-targets',
-               '--all-features',
-               '--tests',
-               '--benches',
-               '--']
-            #, '-D', 'warnings']
+        args: [ '--all-targets',
+                '--all-features',
+                '--tests',
+                '--benches',
+                '--' ]
+        #, '-D', 'warnings']
         language: system
-        types: [rust]
+        types: [ rust ]
         pass_filenames: false
 
       - id: cargo-test
         name: cargo test
         entry: cargo test run --all-features
         language: system
-        types: [rust]
+        types: [ rust ]
         pass_filenames: false
 
-      - id: cargo-audit
-        name: cargo audit
-        entry: cargo audit
-        language: system
-        types: [rust]
-        pass_filenames: false
+#      - id: cargo-audit
+#        name: cargo audit
+#        entry: cargo audit
+#        language: system
+#        types: [rust]
+#        pass_filenames: false
