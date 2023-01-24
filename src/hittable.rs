@@ -29,15 +29,15 @@ impl<'a> HitRecord<'a> {
         front_face: false,
     };
 
-    pub fn new(p: Vec3, normal: Vec3, t: f64, front_face: bool) -> Self {
-        HitRecord {
-            p,
-            normal,
-            material: &EmptyMaterial {},
-            t,
-            front_face,
-        }
-    }
+    // pub fn new(p: Vec3, normal: Vec3, t: f64, front_face: bool) -> Self {
+    //     HitRecord {
+    //         p,
+    //         normal,
+    //         material: &EmptyMaterial {},
+    //         t,
+    //         front_face,
+    //     }
+    // }
 }
 
 pub trait Hittable {

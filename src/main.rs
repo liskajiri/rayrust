@@ -4,7 +4,7 @@ use vec3::*;
 use crate::camera::Camera;
 use crate::hittable::Hittable;
 use crate::hittable_list::HittableList;
-use crate::material::{Lambertian, Material, Metal};
+use crate::material::{Dielectric, Lambertian, Material, Metal};
 use crate::sphere::Sphere;
 use crate::utilities::{random_double, write_buffer_to_file};
 
@@ -51,15 +51,17 @@ fn main() {
         albedo: Color::new(0.8, 0.8, 0.0),
     });
     let material_center = Box::new(Lambertian {
-        albedo: Color::new(0.7, 0.3, 0.3),
+        albedo: Color::new(0.1, 0.2, 0.5),
     });
-    let material_left = Box::new(Metal {
-        albedo: Color::new(0.8, 0.8, 0.8),
-        fuzziness: 0.3,
+    let material_left = Box::new(Dielectric {
+        index_of_refraction: 1.5,
+    });
+    let material_left_2 = Box::new(Dielectric {
+        index_of_refraction: 1.5,
     });
     let material_right = Box::new(Metal {
         albedo: Color::new(0.8, 0.6, 0.2),
-        fuzziness: 1.0,
+        fuzziness: 0.0,
     });
 
     world.add(Box::new(Sphere {
@@ -90,6 +92,16 @@ fn main() {
         },
         radius: 0.5,
         material: material_left,
+    }));
+
+    world.add(Box::new(Sphere {
+        center: Point3 {
+            x: -1.0,
+            y: 0.0,
+            z: -1.0,
+        },
+        radius: -0.4,
+        material: material_left_2,
     }));
 
     world.add(Box::new(Sphere {
@@ -125,10 +137,13 @@ fn main() {
             buffer.push(pixel_color);
         }
     }
-
+    let image_name = "image_16";
     write_buffer_to_file(
-        &"./images/image_12.ppm".to_string(),
+        &format!("images/{}.ppm", image_name),
         &buffer,
         samples_per_pixel,
     );
+
+    // let png_path = &format!("tests/{}.png", image_name);
+    // save_as_png(png_path, &buffer, samples_per_pixel);
 }

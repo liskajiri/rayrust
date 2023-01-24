@@ -1,7 +1,8 @@
-use crate::random_double;
-use crate::utilities::random_double_from_range;
 use std::fmt::{Display, Formatter};
 use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Sub, SubAssign};
+
+use crate::random_double;
+use crate::utilities::random_double_from_range;
 
 #[derive(Copy, Clone)]
 pub struct Vec3 {
@@ -81,7 +82,7 @@ impl Vec3 {
 
     // True Lambertian diffuse
     pub fn random_unit_vector() -> Vec3 {
-        Vec3::unit_vector(Vec3::random_in_unit_sphere())
+        Vec3::random_in_unit_sphere().unit_vector()
     }
 
     pub fn random_from_range(min: f64, max: f64) -> Vec3 {
@@ -120,6 +121,14 @@ impl Vec3 {
     // Reflections for smooth metals
     pub fn reflect(v: &Vec3, normal: &Vec3) -> Vec3 {
         *v - 2.0 * dot(*v, *normal) * *normal
+    }
+
+    pub fn refract(uv: &Vec3, n: &Vec3, refr_indexes_proportion: f64) -> Vec3 {
+        let cos_theta = 1.0_f64.min(dot(-*uv, *n));
+        let r_out_perp = refr_indexes_proportion * (*uv + cos_theta * *n);
+        let r_out_parallel = -((1.0 - r_out_perp.length_squared()).abs().sqrt()) * *n;
+
+        r_out_perp + r_out_parallel
     }
 }
 
