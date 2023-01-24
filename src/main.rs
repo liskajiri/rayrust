@@ -116,11 +116,22 @@ fn main() {
 
     // Camera
     let look_from = Vec3 {
-        x: -2.0,
-        y: 2.0,
-        z: 1.0,
+        x: -3.0,
+        y: 3.0,
+        z: 2.0,
     };
-    let camera = Camera::new(look_from, Point3::z(-1.0), Vec3::y(1.0), 20.0, aspect_ratio);
+    let look_at = Vec3::z(-1.0);
+    let dist_to_focus = (look_from - look_at).length();
+    let aperture = 2.0;
+    let camera = Camera::new(
+        look_from,
+        look_at,
+        Vec3::y(1.0),
+        20.0,
+        aspect_ratio,
+        aperture,
+        dist_to_focus,
+    );
 
     // Render
     let mut buffer: Vec<Color> = Vec::new();
@@ -142,7 +153,7 @@ fn main() {
             buffer.push(pixel_color);
         }
     }
-    let image_name = "image_19";
+    let image_name = "image_20";
     write_buffer_to_file(
         &format!("images/{}.ppm", image_name),
         &buffer,

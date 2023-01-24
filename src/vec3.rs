@@ -41,7 +41,7 @@ impl Vec3 {
         Vec3 { x: 0.0, y: 0.0, z }
     }
 
-    fn length(&self) -> f64 {
+    pub fn length(&self) -> f64 {
         self.length_squared().sqrt()
     }
 
@@ -129,6 +129,20 @@ impl Vec3 {
         let r_out_parallel = -((1.0 - r_out_perp.length_squared()).abs().sqrt()) * *n;
 
         r_out_perp + r_out_parallel
+    }
+
+    pub fn random_in_unit_disk() -> Vec3 {
+        loop {
+            let p = Vec3 {
+                x: random_double_from_range(-1.0, 1.0),
+                y: random_double_from_range(-1.0, 1.0),
+                z: 0.0,
+            };
+            if p.length_squared() >= 1.0 {
+                continue;
+            }
+            return p;
+        }
     }
 }
 
