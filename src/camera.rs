@@ -13,10 +13,15 @@ impl Camera {
     const VIEWPORT_WIDTH: f64 = Camera::ASPECT_RATIO * Camera::VIEWPORT_HEIGHT;
     const FOCAL_LENGTH: f64 = 1.0;
 
-    pub fn new() -> Self {
+    pub fn new(vertical_fov: f64, aspect_ratio: f64) -> Self {
+        let theta = vertical_fov.to_radians();
+        let h = (theta / 2.0).tan();
+        let viewport_height = 2.0 * h;
+        let viewport_width = aspect_ratio * viewport_height;
+
         let origin = Point3::ZERO;
-        let horizontal = Vec3::x(Camera::VIEWPORT_WIDTH);
-        let vertical = Vec3::y(Camera::VIEWPORT_HEIGHT);
+        let horizontal = Vec3::x(viewport_width);
+        let vertical = Vec3::y(viewport_height);
         Camera {
             origin,
             horizontal,
