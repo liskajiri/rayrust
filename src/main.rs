@@ -1,5 +1,3 @@
-use std::f32::consts::PI;
-
 use ray::*;
 use vec3::*;
 
@@ -48,9 +46,7 @@ fn main() {
 
     // World
     let mut world = HittableList::EMPTY;
-    let R = (PI as f64 / 4.0).cos();
 
-    /*
     let material_ground = Box::new(Lambertian {
         albedo: Color::new(0.8, 0.8, 0.0),
     });
@@ -104,7 +100,7 @@ fn main() {
             y: 0.0,
             z: -1.0,
         },
-        radius: -0.4,
+        radius: -0.45,
         material: material_left_2,
     }));
 
@@ -117,37 +113,14 @@ fn main() {
         radius: 0.5,
         material: material_right,
     }));
-     */
-
-    let material_left = Box::new(Lambertian {
-        albedo: Vec3::z(1.0),
-    });
-    let material_right = Box::new(Lambertian {
-        albedo: Vec3::x(1.0),
-    });
-
-    world.add(Box::new(Sphere {
-        center: Point3 {
-            x: -R,
-            y: 0.0,
-            z: -1.0,
-        },
-        radius: R,
-        material: material_left,
-    }));
-
-    world.add(Box::new(Sphere {
-        center: Point3 {
-            x: R,
-            y: 0.0,
-            z: -1.0,
-        },
-        radius: R,
-        material: material_right,
-    }));
 
     // Camera
-    let camera = Camera::new(90.0, aspect_ratio);
+    let look_from = Vec3 {
+        x: -2.0,
+        y: 2.0,
+        z: 1.0,
+    };
+    let camera = Camera::new(look_from, Point3::z(-1.0), Vec3::y(1.0), 20.0, aspect_ratio);
 
     // Render
     let mut buffer: Vec<Color> = Vec::new();
@@ -169,7 +142,7 @@ fn main() {
             buffer.push(pixel_color);
         }
     }
-    let image_name = "image_17";
+    let image_name = "image_19";
     write_buffer_to_file(
         &format!("images/{}.ppm", image_name),
         &buffer,
