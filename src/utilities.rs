@@ -8,7 +8,13 @@ use rand::Rng;
 
 use crate::vec3::Color;
 
-pub fn write_buffer_to_file(filepath: &String, buffer: &Vec<Color>, samples_per_pixel: u32) {
+pub fn write_buffer_to_file(
+    filepath: &String,
+    buffer: &Vec<Color>,
+    samples_per_pixel: u32,
+    image_width: u32,
+    image_height: u32,
+) {
     fn clamp_color(color: f64) -> i32 {
         (256.0 * clamp(color, 0.0, 0.999)) as i32
     }
@@ -21,8 +27,6 @@ pub fn write_buffer_to_file(filepath: &String, buffer: &Vec<Color>, samples_per_
 
     // Image
     let aspect_ratio = 16.0 / 9.0;
-    let image_width = 400;
-    let image_height = (image_width as f64 / aspect_ratio) as u32;
 
     let mut ppm_image = format!("P3\n{image_width} {image_height}\n255\n");
 

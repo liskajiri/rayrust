@@ -15,6 +15,14 @@ impl Sphere {
             material,
         }
     }
+
+    pub fn boxed(center: Point3, radius: f64, material: Box<dyn Material>) -> Box<Sphere> {
+        Box::new(Sphere {
+            center,
+            radius,
+            material,
+        })
+    }
 }
 
 impl Hittable for Sphere {
