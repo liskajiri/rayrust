@@ -21,34 +21,24 @@ fn random_scene() -> HittableList {
     // World
     let mut world = HittableList::EMPTY;
 
-    let material_ground = Box::new(Lambertian {
-        albedo: Color::new(0.5, 0.5, 0.5),
-    });
-    world.add(Box::new(Sphere {
-        center: Point3 {
-            x: 0.0,
-            y: -1000.0,
-            z: -1.0,
-        },
-        radius: 1000.0,
-        material: material_ground,
-    }));
+    let material_ground = Box::new(Lambertian::new(&Color::new(0.5, 0.5, 0.5)));
+    world.add(Box::new(Sphere::new(
+        Point3::new(0.0, -1000.0, -1.0),
+        1000.0,
+        material_ground,
+    )));
 
-    let center_comparison_pt = Point3 {
-        x: 4.0,
-        y: 0.2,
-        z: 0.0,
-    };
+    let center_comparison_pt = Point3::new(4.0, 0.2, 0.0);
 
     for a in -11..11 {
         for b in -11..11 {
             let choose_material = random_double();
 
-            let center = Point3 {
-                x: (a as f64) + 0.9 * random_double(),
-                y: 0.2,
-                z: (b as f64) + 0.9 * random_double(),
-            };
+            let center = Point3::new(
+                (a as f64) + 0.9 * random_double(),
+                0.2,
+                (b as f64) + 0.9 * random_double(),
+            );
 
             if (center - center_comparison_pt).length() > 0.9 {
                 let sphere_material: Box<dyn Material>;
@@ -61,53 +51,28 @@ fn random_scene() -> HittableList {
                     // metal
                     let albedo = Color::random_from_range(0.5, 1.0);
                     let fuzziness = random_double_from_range(0.0, 0.5);
-                    sphere_material = Box::new(Metal { albedo, fuzziness });
+                    sphere_material = Box::new(Metal::new(albedo, fuzziness));
                 } else {
-                    sphere_material = Box::new(Dielectric {
-                        index_of_refraction: 1.5,
-                    });
+                    sphere_material = Box::new(Dielectric::new(1.5));
                 }
                 world.add(Sphere::boxed(center, 0.2, sphere_material));
             }
         }
     }
 
-    let material_1 = Box::new(Dielectric {
-        index_of_refraction: 1.5,
-    });
+    let material_1 = Box::new(Dielectric::new(1.5));
     world.add(Sphere::boxed(Point3::y(1.0), 1.0, material_1));
 
-    let material_2 = Box::new(Lambertian {
-        albedo: Color::new(0.4, 0.4, 0.1),
-    });
-    world.add(Sphere::boxed(
-        Point3 {
-            x: -4.0,
-            y: 1.0,
-            z: 0.0,
-        },
-        1.0,
-        material_2,
-    ));
+    let material_2 = Box::new(Lambertian::new(&Color::new(0.4, 0.4, 0.1)));
+    world.add(Sphere::boxed(Point3::new(-4.0, 1.0, 0.0), 1.0, material_2));
 
-    let material_3 = Box::new(Metal {
-        albedo: Color::new(0.7, 0.6, 0.5),
-        fuzziness: 0.0,
-    });
-    world.add(Sphere::boxed(
-        Point3 {
-            x: 4.0,
-            y: 1.0,
-            z: 0.0,
-        },
-        1.0,
-        material_3,
-    ));
+    let material_3 = Box::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0));
+    world.add(Sphere::boxed(Point3::new(4.0, 1.0, 0.0), 1.0, material_3));
 
     world
 }
 
-fn ray_color(r: &Ray, world: &dyn Hittable, depth: i32) -> Color {
+fn ray_color(r: &Ray, world: &HittableList, depth: i32) -> Color {
     if depth <= 0 {
         return Color::ZERO;
     }
@@ -131,16 +96,12 @@ fn main() {
     let aspect_ratio = 3.0 / 2.0;
     let image_width = 1200;
     let image_height = (image_width as f64 / aspect_ratio) as u32;
-    let samples_per_pixel = 500;
+    let samples_per_pixel = 1;
     let max_depth = 50;
 
     let world = random_scene();
     // Camera
-    let look_from = Vec3 {
-        x: 13.0,
-        y: 2.0,
-        z: 3.0,
-    };
+    let look_from = Vec3::new(13.0, 2.0, 3.0);
     let look_at = Vec3::ZERO;
     let dist_to_focus = 10.0;
     let view_up = Vec3::y(1.0);
@@ -162,22 +123,22 @@ fn main() {
     let image_height_less = (image_height as f64) - 1.0;
 
     for j in (0..image_height).rev() {
-        eprintln!("Scan lines remaining: {}", j);
+        eprintln!("Scan lines remaining: {j}");
         for i in 0..image_width {
             let mut pixel_color = Color::ZERO;
-            for _ in 0..samples_per_pixel {
+            (0..samples_per_pixel).for_each(|_| {
                 let u = ((i as f64) + random_double()) / image_width_less;
                 let v = ((j as f64) + random_double()) / image_height_less;
 
-                let r = camera.get_ray(u, v);
-                pixel_color += ray_color(&r, &world, max_depth);
-            }
+                let r = &camera.get_ray(u, v);
+                pixel_color += ray_color(r, &world, max_depth);
+            });
             buffer.push(pixel_color);
         }
     }
-    let image_name = "image_21";
+    let image_name = "image_xy";
     write_buffer_to_file(
-        &format!("images/{}.ppm", image_name),
+        &format!("images/{image_name}.ppm"),
         &buffer,
         samples_per_pixel,
         image_width,

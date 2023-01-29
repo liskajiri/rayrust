@@ -3,7 +3,7 @@ use crate::{Point3, Ray, Vec3};
 struct CameraBasis {
     u: Vec3,
     v: Vec3,
-    w: Vec3,
+    _w: Vec3,
 }
 
 pub struct Camera {
@@ -46,18 +46,16 @@ impl Camera {
             vertical,
             lower_left_corner,
             lens_radius,
-            uvw: CameraBasis { u, v, w },
+            uvw: CameraBasis { u, v, _w: w },
         }
     }
 
     pub fn get_ray(&self, s: f64, t: f64) -> Ray {
         let rd = self.lens_radius * Vec3::random_in_unit_disk();
         let offset = self.uvw.u * rd.x + self.uvw.v * rd.y;
-        Ray {
-            orig: self.origin + offset,
-            dir: self.lower_left_corner + s * self.horizontal + t * self.vertical
-                - self.origin
-                - offset,
-        }
+        Ray::new(
+            self.origin + offset,
+            self.lower_left_corner + s * self.horizontal + t * self.vertical - self.origin - offset,
+        )
     }
 }

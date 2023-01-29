@@ -6,9 +6,9 @@ use crate::utilities::random_double_from_range;
 
 #[derive(Copy, Clone)]
 pub struct Vec3 {
-    pub x: f64,
-    pub y: f64,
-    pub z: f64,
+    pub(crate) x: f64,
+    pub(crate) y: f64,
+    pub(crate) z: f64,
 }
 
 pub type Point3 = Vec3;
@@ -51,7 +51,7 @@ impl Vec3 {
 
     // vector operations
 
-    fn dot(a: Vec3, b: Vec3) -> f64 {
+    fn _dot(a: Vec3, b: Vec3) -> f64 {
         a.x * b.x + a.y * b.y + a.z * b.z
     }
 

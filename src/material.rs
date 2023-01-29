@@ -18,7 +18,7 @@ pub struct Lambertian {
 }
 
 impl Lambertian {
-    pub fn new(color: &Color) -> Lambertian {
+    pub fn new(color: &Color) -> Self {
         Lambertian { albedo: *color }
     }
 }
@@ -75,7 +75,7 @@ pub struct Dielectric {
 }
 
 impl Dielectric {
-    fn new(index_of_refraction: f64) -> Self {
+    pub(crate) fn new(index_of_refraction: f64) -> Self {
         Dielectric {
             index_of_refraction,
         }
@@ -85,7 +85,7 @@ impl Dielectric {
         // Schlick's approximation for reflectance
         let r0 = (1.0 - ref_idx) / (1.0 + ref_idx);
         let r0 = r0 * r0;
-        r0 + (1.0 - r0) * f64::powf((1.0 - cosine), 5.0)
+        r0 + (1.0 - r0) * f64::powf(1.0 - cosine, 5.0)
     }
 }
 

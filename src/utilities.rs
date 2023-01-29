@@ -26,8 +26,6 @@ pub fn write_buffer_to_file(
         .unwrap();
 
     // Image
-    let aspect_ratio = 16.0 / 9.0;
-
     let mut ppm_image = format!("P3\n{image_width} {image_height}\n255\n");
 
     let scale = 1.0 / (samples_per_pixel as f64);

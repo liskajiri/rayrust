@@ -17,11 +17,7 @@ impl Sphere {
     }
 
     pub fn boxed(center: Point3, radius: f64, material: Box<dyn Material>) -> Box<Sphere> {
-        Box::new(Sphere {
-            center,
-            radius,
-            material,
-        })
+        Box::new(Sphere::new(center, radius, material))
     }
 }
 
@@ -49,6 +45,7 @@ impl Hittable for Sphere {
             }
         }
 
+        // TODO: Weird code
         let mut rec = HitRecord::EMPTY;
 
         rec.t = root;

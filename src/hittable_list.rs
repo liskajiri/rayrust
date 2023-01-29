@@ -8,7 +8,7 @@ pub struct HittableList {
 impl HittableList {
     pub const EMPTY: HittableList = HittableList { objects: vec![] };
 
-    pub fn new(object: Box<dyn Hittable>) -> Self {
+    pub fn _new(object: Box<dyn Hittable>) -> Self {
         HittableList {
             objects: vec![object],
         }
@@ -18,7 +18,7 @@ impl HittableList {
         self.objects.push(object);
     }
 
-    pub fn clear(&mut self) {
+    pub fn _clear(&mut self) {
         self.objects.clear();
     }
 }
