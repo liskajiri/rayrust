@@ -1,20 +1,21 @@
 use crate::hittable::{HitRecord, Hittable};
+use crate::sphere::Sphere;
 use crate::Ray;
 
 pub struct HittableList {
-    objects: Vec<Box<dyn Hittable>>,
+    objects: Vec<Box<Sphere>>,
 }
 
 impl HittableList {
     pub const EMPTY: HittableList = HittableList { objects: vec![] };
 
-    pub fn _new(object: Box<dyn Hittable>) -> Self {
+    pub fn _new(object: Box<Sphere>) -> Self {
         HittableList {
             objects: vec![object],
         }
     }
 
-    pub fn add(&mut self, object: Box<dyn Hittable>) {
+    pub fn add(&mut self, object: Box<Sphere>) {
         self.objects.push(object);
     }
 
