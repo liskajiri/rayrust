@@ -1,3 +1,6 @@
+#![warn(rust_2018_idioms)]
+#![allow(elided_lifetimes_in_paths)]
+
 use ray::*;
 use vec3::*;
 
@@ -94,10 +97,10 @@ fn ray_color(r: &Ray, world: &HittableList, depth: i32) -> Color {
 fn main() {
     // Image
     let aspect_ratio = 3.0 / 2.0;
-    let image_width = 1200;
+    let image_width = 300;
     let image_height = (image_width as f64 / aspect_ratio) as u32;
     let samples_per_pixel = 1;
-    let max_depth = 50;
+    let max_depth = 5;
 
     let world = random_scene();
     // Camera
