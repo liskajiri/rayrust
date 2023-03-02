@@ -1,7 +1,14 @@
-# Rayrust
+<div align="center">
+  <h1> Rayrust </h1>
 
-Implementation of [_Ray Tracing in One Weekend_](https://raytracing.github.io/books/RayTracingInOneWeekend.html) using
-Rust
+  <p>
+    Implementation of
+<a href="https://raytracing.github.io/books/RayTracingInOneWeekend.html">
+    <cite>Ray Tracing in One Weekend</cite>
+</a>
+    in Rust
+  <p>
+</div>
 
 ![Final Scene](images/final_image.png)
 
