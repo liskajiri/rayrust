@@ -3,19 +3,19 @@ use crate::sphere::Sphere;
 use crate::Ray;
 
 pub struct HittableList {
-    objects: Vec<Box<Sphere>>,
+    objects: Vec<Sphere>,
 }
 
 impl HittableList {
     pub const EMPTY: HittableList = HittableList { objects: vec![] };
 
-    pub fn _new(object: Box<Sphere>) -> Self {
+    pub fn _new(object: Sphere) -> Self {
         HittableList {
             objects: vec![object],
         }
     }
 
-    pub fn add(&mut self, object: Box<Sphere>) {
+    pub fn add(&mut self, object: Sphere) {
         self.objects.push(object);
     }
 

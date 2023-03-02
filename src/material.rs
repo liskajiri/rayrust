@@ -1,6 +1,25 @@
 use crate::hittable::HitRecord;
 use crate::utilities::random_double;
-use crate::{dot, Color, Ray, Vec3};
+use crate::vec3::dot;
+use crate::{Color, Ray, Vec3};
+
+pub enum Materials {
+    EmptyMaterial(EmptyMaterial),
+    Lambertian(Lambertian),
+    Metal(Metal),
+    Dielectric(Dielectric),
+}
+
+impl Material for Materials {
+    fn scatter(&self, _ray_in: &Ray, _rec: &HitRecord) -> Option<(Ray, Color)> {
+        match self {
+            Materials::EmptyMaterial(_) => None,
+            Materials::Lambertian(lambertian) => lambertian.scatter(_ray_in, _rec),
+            Materials::Metal(metal) => metal.scatter(_ray_in, _rec),
+            Materials::Dielectric(dielectric) => dielectric.scatter(_ray_in, _rec),
+        }
+    }
+}
 
 pub trait Material {
     fn scatter(&self, _ray_in: &Ray, _rec: &HitRecord) -> Option<(Ray, Color)> {
@@ -24,7 +43,6 @@ impl Lambertian {
 }
 
 impl Material for Lambertian {
-    // impl Material for Lambertian {
     fn scatter(&self, _ray_in: &Ray, rec: &HitRecord) -> Option<(Ray, Color)> {
         let mut scatter_direction = rec.normal + Vec3::random_unit_vector();
 

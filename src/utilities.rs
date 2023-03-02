@@ -1,5 +1,3 @@
-extern crate image;
-
 use std::fs::OpenOptions;
 use std::io::Write;
 
@@ -37,19 +35,21 @@ pub fn write_buffer_to_file(
         let b = scaled_color.z.sqrt();
         let formatted_color =
             format!("{} {} {}\n", clamp_color(r), clamp_color(g), clamp_color(b),);
-        ppm_image.push_str(&*formatted_color);
+        ppm_image.push_str(&formatted_color);
     }
     file.write_all(ppm_image.as_bytes()).unwrap();
 }
 
-pub fn _save_as_png(filename: &str, buffer: &[Color], samples_per_pixel: u32) {
+pub fn _save_as_png(
+    filename: &str,
+    buffer: &Vec<Color>,
+    samples_per_pixel: u32,
+    image_width: u32,
+    image_height: u32,
+) {
     fn clamp_color(color: f64) -> u8 {
         (256.0 * clamp(color, 0.0, 0.999)) as u8
     }
-
-    let aspect_ratio = 16.0 / 9.0;
-    let image_width = 400;
-    let image_height = (image_width as f64 / aspect_ratio) as u32;
 
     let mut rgb_image = RgbImage::new(image_width, image_height);
 

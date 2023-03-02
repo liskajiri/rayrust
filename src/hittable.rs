@@ -1,11 +1,12 @@
-use crate::material::EmptyMaterial;
-use crate::{dot, Material, Point3, Ray, Vec3};
+use crate::material::{EmptyMaterial, Materials};
+use crate::vec3::dot;
+use crate::{Point3, Ray, Vec3};
 
 #[derive(Clone, Copy)]
 pub struct HitRecord<'a> {
     pub p: Point3,
     pub normal: Vec3,
-    pub material: &'a dyn Material,
+    pub material: &'a Materials,
     pub t: f64,
     pub front_face: bool,
 }
@@ -24,7 +25,7 @@ impl<'a> HitRecord<'a> {
     pub const EMPTY: HitRecord<'a> = HitRecord {
         p: Vec3::ZERO,
         normal: Vec3::ZERO,
-        material: &EmptyMaterial {},
+        material: &Materials::EmptyMaterial(EmptyMaterial {}),
         t: 0.0,
         front_face: false,
     };
@@ -33,7 +34,7 @@ impl<'a> HitRecord<'a> {
         HitRecord {
             p,
             normal,
-            material: &EmptyMaterial {},
+            material: &Materials::EmptyMaterial(EmptyMaterial {}),
             t,
             front_face,
         }

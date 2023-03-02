@@ -1,8 +1,7 @@
 use std::fmt::{Display, Formatter};
 use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Sub, SubAssign};
 
-use crate::random_double;
-use crate::utilities::random_double_from_range;
+use crate::utilities::{random_double, random_double_from_range};
 
 #[derive(Copy, Clone)]
 pub struct Vec3 {
