@@ -10,7 +10,7 @@ use crate::material::{Dielectric, Lambertian, Material, Materials, Metal};
 use crate::ray::Ray;
 use crate::sphere::Sphere;
 use crate::utilities::{
-    _save_as_png, random_double, random_double_from_range, write_buffer_to_file,
+    random_double, random_double_from_range, save_image_as_png, save_image_as_ppm,
 };
 use crate::vec3::{Color, Point3, Vec3};
 
@@ -100,10 +100,10 @@ fn ray_color(r: &Ray, world: &HittableList, depth: i32) -> Color {
 fn main() {
     // Image
     const ASPECT_RATIO: f64 = 3.0 / 2.0;
-    const IMAGE_WIDTH: u32 = 400;
+    const IMAGE_WIDTH: u32 = 100;
     const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
-    const SAMPLES_PER_PIXEL: u32 = 10;
-    const MAX_DEPTH: i32 = 5;
+    const SAMPLES_PER_PIXEL: u32 = 500;
+    const MAX_DEPTH: i32 = 50;
 
     let world = final_scene();
     // Camera
@@ -143,8 +143,8 @@ fn main() {
         buffer.extend(line_pixels);
     }
 
-    let image_name = "image_xy";
-    write_buffer_to_file(
+    let image_name = "final_image_111";
+    save_image_as_ppm(
         &format!("images/{image_name}.ppm"),
         &buffer,
         SAMPLES_PER_PIXEL,
@@ -153,7 +153,7 @@ fn main() {
     );
 
     let png_path = &format!("images/{image_name}.png");
-    _save_as_png(
+    save_image_as_png(
         png_path,
         &buffer,
         SAMPLES_PER_PIXEL,

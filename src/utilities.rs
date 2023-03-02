@@ -6,7 +6,7 @@ use rand::Rng;
 
 use crate::vec3::Color;
 
-pub fn write_buffer_to_file(
+pub fn save_image_as_ppm(
     filepath: &String,
     buffer: &Vec<Color>,
     samples_per_pixel: u32,
@@ -23,7 +23,6 @@ pub fn write_buffer_to_file(
         .open(filepath)
         .unwrap();
 
-    // Image
     let mut ppm_image = format!("P3\n{image_width} {image_height}\n255\n");
 
     let scale = 1.0 / (samples_per_pixel as f64);
@@ -40,9 +39,9 @@ pub fn write_buffer_to_file(
     file.write_all(ppm_image.as_bytes()).unwrap();
 }
 
-pub fn _save_as_png(
+pub fn save_image_as_png(
     filename: &str,
-    buffer: &Vec<Color>,
+    buffer: &[Color],
     samples_per_pixel: u32,
     image_width: u32,
     image_height: u32,
