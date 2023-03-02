@@ -1,6 +1,8 @@
 #![warn(rust_2018_idioms)]
 #![allow(elided_lifetimes_in_paths)]
 
+use rayon::prelude::*;
+
 use crate::camera::Camera;
 use crate::hittable::Hittable;
 use crate::hittable_list::HittableList;
@@ -98,9 +100,9 @@ fn ray_color(r: &Ray, world: &HittableList, depth: i32) -> Color {
 fn main() {
     // Image
     const ASPECT_RATIO: f64 = 3.0 / 2.0;
-    const IMAGE_WIDTH: u32 = 300;
+    const IMAGE_WIDTH: u32 = 400;
     const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
-    const SAMPLES_PER_PIXEL: u32 = 1;
+    const SAMPLES_PER_PIXEL: u32 = 10;
     const MAX_DEPTH: i32 = 5;
 
     let world = final_scene();
@@ -118,19 +120,27 @@ fn main() {
     let mut buffer = Vec::with_capacity((IMAGE_WIDTH * IMAGE_HEIGHT) as usize);
 
     for j in (0..IMAGE_HEIGHT).rev() {
-        eprintln!("Scan lines remaining: {j}");
+        if j % 50 == 0 {
+            println!("Line {j}");
+        }
+        let line_pixels = (0..IMAGE_WIDTH)
+            .into_par_iter()
+            .map(|i| {
+                let pixel: Color = (0..SAMPLES_PER_PIXEL)
+                    .map(|_| {
+                        let u = ((i as f64) + random_double()) / ((IMAGE_WIDTH - 1) as f64);
+                        let v = ((j as f64) + random_double()) / ((IMAGE_HEIGHT - 1) as f64);
 
-        (0..IMAGE_WIDTH).for_each(|i| {
-            let mut pixel_color = Color::ZERO;
-            (0..SAMPLES_PER_PIXEL).for_each(|_| {
-                let u = ((i as f64) + random_double()) / ((IMAGE_WIDTH - 1) as f64);
-                let v = ((j as f64) + random_double()) / ((IMAGE_HEIGHT - 1) as f64);
+                        let r = &camera.get_ray(u, v);
+                        let pixel_color = ray_color(r, &world, MAX_DEPTH);
+                        pixel_color
+                    })
+                    .sum::<Color>();
+                pixel
+            })
+            .collect::<Vec<Color>>();
 
-                let r = &camera.get_ray(u, v);
-                pixel_color += ray_color(r, &world, MAX_DEPTH);
-            });
-            buffer.push(pixel_color);
-        });
+        buffer.extend(line_pixels);
     }
 
     let image_name = "image_xy";
@@ -142,7 +152,7 @@ fn main() {
         IMAGE_HEIGHT,
     );
 
-    let png_path = &format!("images/{}.png", image_name);
+    let png_path = &format!("images/{image_name}.png");
     _save_as_png(
         png_path,
         &buffer,

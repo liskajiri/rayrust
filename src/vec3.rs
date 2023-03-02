@@ -1,4 +1,5 @@
 use std::fmt::{Display, Formatter};
+use std::iter::Sum;
 use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Sub, SubAssign};
 
 use crate::utilities::{random_double, random_double_from_range};
@@ -12,6 +13,16 @@ pub struct Vec3 {
 
 pub type Point3 = Vec3;
 pub type Color = Vec3;
+
+impl Sum for Vec3 {
+    fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
+        iter.fold(Vec3::ZERO, |a, b| Vec3 {
+            x: a.x + b.x,
+            y: a.y + b.y,
+            z: a.z + b.z,
+        })
+    }
+}
 
 impl Vec3 {
     pub fn new(x: f64, y: f64, z: f64) -> Self {
