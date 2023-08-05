@@ -132,8 +132,7 @@ fn main() {
                         let v = ((j as f64) + random_double()) / ((IMAGE_HEIGHT - 1) as f64);
 
                         let r = &camera.get_ray(u, v);
-                        let pixel_color = ray_color(r, &world, MAX_DEPTH);
-                        pixel_color
+                        ray_color(r, &world, MAX_DEPTH)
                     })
                     .sum::<Color>();
                 pixel
